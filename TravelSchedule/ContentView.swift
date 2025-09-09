@@ -120,14 +120,20 @@ struct ContentView: View {
                     transport: URLSessionTransport()
                 )
                 
-                let service = RouteStationsService(
+                let serviceStation = StationScheduleService(
                     client: client,
                     apikey: Config.yandexAPIKey
                 )
                 
+                let service = RouteStationsService(
+                    client: client,
+                    apikey: Config.yandexAPIKey,
+                    stationScheduleService: serviceStation
+                )
+                
                 print("Fetching route stations...")
                 let routeStations = try await service.getRouteStations(
-                    uid: "038AA_tis"
+                    stationCode: "s9602497"
                 )
                 
                 print("Successfully fetched thread stations: \(routeStations)")
