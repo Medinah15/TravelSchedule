@@ -21,4 +21,3 @@ final class SettingsViewModel: ObservableObject {
         appError = .noInternet
     }
 }
-

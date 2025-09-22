@@ -8,6 +8,6 @@
 import Foundation
 
 struct SelectedStation {
-    let title: String
     let code: String
+    let title: String 
 }

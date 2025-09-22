@@ -6,29 +6,29 @@
 //
 import SwiftUI
 
+enum Route: Hashable {
+    case cityPicker(isFrom: Bool)
+    case stationPicker(cityId: String, cityTitle: String, isFrom: Bool)
+    case searchResults(fromCode: String, toCode: String)
+}
+
 struct MainView: View {
-    // MARK: - State
-    
     @State private var fromTitle = ""
     @State private var toTitle = ""
     
     @State private var fromStation: SelectedStation?
     @State private var toStation: SelectedStation?
     
-    @State private var showFromSearch = false
-    @State private var showToSearch = false
-    
     @State private var pickFrom = true
-    @State private var selectedCity = ""
+    
+    @State private var path = NavigationPath()
     
     var canSearch: Bool { fromStation != nil && toStation != nil }
     
-    // MARK: - Body
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 24) {
-                    
                     SearchPanel(
                         from: $fromTitle,
                         to: $toTitle,
@@ -38,23 +38,21 @@ struct MainView: View {
                         },
                         onFromTap: {
                             pickFrom = true
-                            showFromSearch = true
+                            path.append(Route.cityPicker(isFrom: true))
                         },
                         onToTap: {
                             pickFrom = false
-                            showToSearch = true
+                            path.append(Route.cityPicker(isFrom: false))
                         }
                     )
                     .padding(.horizontal, 16)
                     .padding(.top, 224)
                     
                     if canSearch {
-                        NavigationLink {
-                            SearchResultsView(
-                                from: fromStation!.code,
-                                to: toStation!.code
-                            )
-                        } label: {
+                        NavigationLink(value: Route.searchResults(
+                            fromCode: fromStation!.code,
+                            toCode: toStation!.code
+                        )) {
                             Text("Найти")
                                 .font(.system(size: 17, weight: .bold))
                                 .frame(width: 150, height: 60)
@@ -67,34 +65,37 @@ struct MainView: View {
                     Spacer()
                 }
             }
-            
-            .navigationDestination(isPresented: $showFromSearch) {
-                CityPickerView { city in
-                    selectedCity = city
-                    showFromSearch = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        showStationPicker(for: city, isFrom: true)
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case .cityPicker(let isFrom):
+                    CityPickerView { city in
+                        path.removeLast()
+                        path.append(Route.stationPicker(
+                            cityId: city.id,
+                            cityTitle: city.title,
+                            isFrom: isFrom
+                        ))
                     }
-                }
-                .toolbar(.hidden, for: .tabBar)
-            }
-            
-            .navigationDestination(isPresented: $showToSearch) {
-                CityPickerView { city in
-                    selectedCity = city
-                    showToSearch = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        showStationPicker(for: city, isFrom: false)
+                    .toolbar(.hidden, for: .tabBar)
+                    
+                case .stationPicker(let cityId, let cityTitle, let isFrom):
+                    StationPickerView(cityId: cityId) { station in
+                        let combinedTitle = "\(cityTitle) (\(station.title))"
+                        if isFrom {
+                            fromStation = station
+                            fromTitle = combinedTitle
+                        } else {
+                            toStation = station
+                            toTitle = combinedTitle
+                        }
+                        path.removeLast()
                     }
+                    .toolbar(.hidden, for: .tabBar)
+                    
+                case .searchResults(let fromCode, let toCode):
+                    SearchResultsView(from: fromCode, to: toCode)
                 }
-                .toolbar(.hidden, for: .tabBar)
             }
         }
-    }
-    
-    // MARK: - Helpers
-    
-    private func showStationPicker(for city: String, isFrom: Bool) {
-        
     }
 }

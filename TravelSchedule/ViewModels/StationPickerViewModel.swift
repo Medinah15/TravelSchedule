@@ -9,19 +9,19 @@ import SwiftUI
 
 @MainActor
 final class StationPickerViewModel: ObservableObject {
-    @Published var stations: [(title: String, code: String)] = []
+    @Published var stations: [Station] = []
     @Published var isLoading = false
     @Published var appError: AppError?
     
     private let service: AllStationsServiceProtocol
-    private let city: String
+    private let cityId: String
     
-    init(city: String,
+    init(cityId: String,
          service: AllStationsServiceProtocol = AllStationsService(
             client: NetworkManager.shared.client,
             apikey: NetworkManager.shared.apiKey
          )) {
-             self.city = city
+             self.cityId = cityId
              self.service = service
          }
     
@@ -30,32 +30,25 @@ final class StationPickerViewModel: ObservableObject {
         appError = nil
         do {
             let data = try await service.getAllStations()
-            
             let settlements = data.countries?
                 .flatMap { $0.regions ?? [] }
-                .flatMap { $0.settlements ?? [] }
+                .flatMap { $0.settlements ?? [] } ?? []
             
-            let targetSettlement = settlements?.first { $0.title == city }
-            let stationsList = targetSettlement?.stations ?? []
+            guard let selectedCity = settlements.first(where: { $0.codes?.yandex_code == cityId }) else {
+                self.stations = []
+                isLoading = false
+                return
+            }
             
-            self.stations = stationsList.compactMap { station in
-                if let title = station.title,
-                   let code = station.codes?.yandex_code {
-                    return (title, code)
-                }
-                return nil
-            }
-        } catch let urlError as URLError {
-            switch urlError.code {
-            case .notConnectedToInternet:
-                appError = .noInternet
-            case .badServerResponse, .cannotConnectToHost:
-                appError = .serverError
-            default:
-                appError = .unknown
-            }
+            let stationsInCity = selectedCity.stations?.compactMap { station -> Station? in
+                guard let code = station.codes?.yandex_code,
+                      let title = station.title else { return nil }
+                return Station(id: code, title: title)
+            } ?? []
+            
+            self.stations = stationsInCity.sorted { $0.title < $1.title }
         } catch {
-            appError = .unknown
+            appError = .serverError
         }
         isLoading = false
     }
