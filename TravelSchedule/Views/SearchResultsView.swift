@@ -3,60 +3,109 @@
 //  TravelSchedule
 //
 //  Created by Medina Huseynova on 20.09.25.
-
 import SwiftUI
 
+// MARK: - View
 struct SearchResultsView: View {
-    let from: String
-    let to: String
+    
+    // MARK: - Properties
+    let fromCode: String
+    let toCode: String
+    
+    let fromTitle: String
+    let toTitle: String
+    
+    @Binding var path: NavigationPath
     @StateObject private var viewModel = SearchResultsViewModel()
+    @Environment(\.dismiss) private var dismiss
     
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
+    @State private var showFilters = false
+    @State private var filtersApplied = false
     
+    // MARK: - Body
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
+            HStack {
+                Text("\(fromTitle) → \(toTitle)")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.black)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.white)
+            
             if viewModel.isLoading {
-                ProgressView("Загрузка...")
+                Spacer()
+                ProgressView("Загружаем рейсы…")
+                Spacer()
             } else if let appError = viewModel.appError {
-                ErrorView(type: mapError(appError))
+                Spacer()
+                Text("Ошибка загрузки")
+                    .foregroundColor(.red)
+                Spacer()
             } else if viewModel.results.isEmpty {
+                Spacer()
                 Text("Вариантов нет")
+                    .font(.system(size: 17))
+                    .foregroundColor(.gray)
+                Spacer()
             } else {
-                List(viewModel.results, id: \.thread?.uid) { segment in
-                    VStack(alignment: .leading) {
-                        Text(segment.thread?.carrier?.title ?? "Неизвестный перевозчик")
-                            .font(.headline)
-                        
-                        let departure = segment.departure.flatMap { dateFormatter.string(from: $0) } ?? "?"
-                        let arrival = segment.arrival.flatMap { dateFormatter.string(from: $0) } ?? "?"
-                        
-                        Text("\(departure) → \(arrival)")
-                            .font(.subheadline)
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        ForEach(viewModel.results, id: \.thread?.uid) { segment in
+                            SegmentCard(segment: segment)
+                                .contentShape(Rectangle())
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+                    .padding(.bottom, 100)
                 }
             }
             
-            NavigationLink("Уточнить время") {
-                FiltersView()
+            if !viewModel.results.isEmpty {
+                Button { showFilters = true } label: {
+                    HStack(spacing: 4) {
+                        Text("Уточнить время")
+                            .font(.system(size: 17, weight: .bold))
+                        if filtersApplied {
+                            Circle()
+                                .fill(Color.red)
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 60)
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.white)
+                .background(Color.blue)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
-            .buttonStyle(PrimaryButton())
-            .padding()
         }
-        .navigationTitle("Результаты")
+        
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button { dismiss() } label: {
+                    Image(systemName: "chevron.left")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 17, height: 22)
+                        .foregroundColor(.black)
+                }
+            }
+        }
+        .toolbar(.hidden, for: .tabBar)
+        
         .task {
-            await viewModel.loadResults(from: from, to: to)
-        }
-    }
-    
-    private func mapError(_ error: AppError) -> ErrorType {
-        switch error {
-        case .noInternet: return .noInternet
-        case .serverError: return .serverError
-        default: return .serverError
+            await viewModel.loadResults(from: fromCode, to: toCode)
         }
     }
 }

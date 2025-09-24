@@ -7,36 +7,37 @@
 
 import SwiftUI
 
+// MARK: - Tab Enum
+private enum AppTab: Int {
+    case schedule
+    case settings
+}
+
+// MARK: - View
 struct AppTabView: View {
-    @State private var selectedTab = 0
     
+    // MARK: - State
+    @State private var selectedTab: AppTab = .schedule
+    
+    // MARK: - Body
     var body: some View {
         TabView(selection: $selectedTab) {
+            
             NavigationStack {
                 MainView()
             }
             .tabItem {
-                if selectedTab == 0 {
-                    Image("schedule_active")
-                } else {
-                    Image("schedule_inactive")
-                }
-                
+                Image(selectedTab == .schedule ? "schedule_active" : "schedule_inactive")
             }
-            .tag(0)
+            .tag(AppTab.schedule)
             
             NavigationStack {
                 SettingsView()
             }
             .tabItem {
-                if selectedTab == 1 {
-                    Image("settings_active")
-                } else {
-                    Image("settings_inactive")
-                }
-                
+                Image(selectedTab == .settings ? "settings_active" : "settings_inactive")
             }
-            .tag(1)
+            .tag(AppTab.settings)
         }
     }
 }

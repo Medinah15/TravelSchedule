@@ -6,13 +6,10 @@
 //
 import SwiftUI
 
-enum Route: Hashable {
-    case cityPicker(isFrom: Bool)
-    case stationPicker(cityId: String, cityTitle: String, isFrom: Bool)
-    case searchResults(fromCode: String, toCode: String)
-}
-
+// MARK: - View
 struct MainView: View {
+    
+    // MARK: - State
     @State private var fromTitle = ""
     @State private var toTitle = ""
     
@@ -20,15 +17,17 @@ struct MainView: View {
     @State private var toStation: SelectedStation?
     
     @State private var pickFrom = true
-    
     @State private var path = NavigationPath()
     
+    // MARK: - Computed
     var canSearch: Bool { fromStation != nil && toStation != nil }
     
+    // MARK: - Body
     var body: some View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 24) {
+                    
                     SearchPanel(
                         from: $fromTitle,
                         to: $toTitle,
@@ -51,7 +50,9 @@ struct MainView: View {
                     if canSearch {
                         NavigationLink(value: Route.searchResults(
                             fromCode: fromStation!.code,
-                            toCode: toStation!.code
+                            toCode: toStation!.code,
+                            fromTitle: fromStation!.title,
+                            toTitle: toStation!.title
                         )) {
                             Text("Найти")
                                 .font(.system(size: 17, weight: .bold))
@@ -80,20 +81,28 @@ struct MainView: View {
                     
                 case .stationPicker(let cityId, let cityTitle, let isFrom):
                     StationPickerView(cityId: cityId) { station in
-                        let combinedTitle = "\(cityTitle) (\(station.title))"
                         if isFrom {
                             fromStation = station
-                            fromTitle = combinedTitle
+                            fromTitle = station.title
                         } else {
                             toStation = station
-                            toTitle = combinedTitle
+                            toTitle = station.title
                         }
                         path.removeLast()
                     }
                     .toolbar(.hidden, for: .tabBar)
                     
-                case .searchResults(let fromCode, let toCode):
-                    SearchResultsView(from: fromCode, to: toCode)
+                case .searchResults(let fromCode, let toCode, let fromTitle, let toTitle):
+                    SearchResultsView(
+                        fromCode: fromCode,
+                        toCode: toCode,
+                        fromTitle: fromTitle,
+                        toTitle: toTitle,
+                        path: $path
+                    )
+                    
+                case .carrierInfo(let code):
+                    CarriersView(carrierCode: code)
                 }
             }
         }

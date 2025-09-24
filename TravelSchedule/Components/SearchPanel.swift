@@ -7,12 +7,17 @@
 import SwiftUI
 
 struct SearchPanel: View {
+    
+    // MARK: - Bindings
     @Binding var from: String
     @Binding var to: String
+    
+    // MARK: - Callbacks
     let onSwap: () -> Void
     let onFromTap: () -> Void
     let onToTap: () -> Void
     
+    // MARK: - Body
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20, style: .continuous)

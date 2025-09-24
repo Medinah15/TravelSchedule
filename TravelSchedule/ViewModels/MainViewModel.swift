@@ -7,10 +7,14 @@
 
 import SwiftUI
 
+// MARK: - ViewModel
 @MainActor
 final class MainViewModel: ObservableObject {
+    
+    // MARK: - Published Properties
     @Published var appError: AppError?
     
+    // MARK: - Public Methods
     func simulateErrorCheck() {
         let connected = Reachability.isConnectedToNetwork()
         if !connected {

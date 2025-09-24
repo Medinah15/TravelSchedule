@@ -6,14 +6,19 @@
 //
 import SwiftUI
 
+// MARK: - Error Type
 enum ErrorType {
     case noInternet
     case serverError
 }
 
+// MARK: - View
 struct ErrorView: View {
+    
+    // MARK: - Properties
     let type: ErrorType
     
+    // MARK: - Body
     var body: some View {
         VStack {
             Image(type == .noInternet ? "no_internet" : "server_error")

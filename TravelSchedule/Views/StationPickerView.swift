@@ -6,23 +6,32 @@
 //
 import SwiftUI
 
+// MARK: - View
 struct StationPickerView: View {
+    
+    // MARK: - Environment
     @Environment(\.dismiss) private var dismiss
+    
+    // MARK: - State
     @State private var searchText = ""
     @StateObject private var viewModel: StationPickerViewModel
     
+    // MARK: - Properties
     let onSelect: (SelectedStation) -> Void
     
+    // MARK: - Init
     init(cityId: String, onSelect: @escaping (SelectedStation) -> Void) {
         _viewModel = StateObject(wrappedValue: StationPickerViewModel(cityId: cityId))
         self.onSelect = onSelect
     }
     
+    // MARK: - Computed
     var filteredStations: [Station] {
         if searchText.isEmpty { return viewModel.stations }
         return viewModel.stations.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
     }
     
+    // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -116,6 +125,7 @@ struct StationPickerView: View {
         .task { await viewModel.loadStations() }
     }
     
+    // MARK: - Helpers
     private func mapError(_ error: AppError) -> ErrorType {
         switch error {
         case .noInternet: return .noInternet

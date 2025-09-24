@@ -6,18 +6,23 @@
 
 import SwiftUI
 
+// MARK: - View
 struct CityPickerView: View {
+    
+    // MARK: - Properties
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
     @StateObject private var viewModel = CityPickerViewModel()
     
     let onSelect: (City) -> Void
     
+    // MARK: - Computed
     var filteredCities: [City] {
         if searchText.isEmpty { return viewModel.cities }
         return viewModel.cities.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
     }
     
+    // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -112,6 +117,7 @@ struct CityPickerView: View {
         .task { await viewModel.loadCities() }
     }
     
+    // MARK: - Helpers
     private func mapError(_ error: AppError) -> ErrorType {
         switch error {
         case .noInternet: return .noInternet

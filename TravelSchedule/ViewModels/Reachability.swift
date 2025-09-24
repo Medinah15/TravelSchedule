@@ -7,7 +7,10 @@
 
 import SystemConfiguration
 
+// MARK: - Reachability
 enum Reachability {
+    
+    // MARK: - Public Methods
     static func isConnectedToNetwork() -> Bool {
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))

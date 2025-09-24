@@ -7,15 +7,20 @@
 
 import SwiftUI
 
+// MARK: - ViewModel
 @MainActor
 final class StationPickerViewModel: ObservableObject {
+    
+    // MARK: - Published Properties
     @Published var stations: [Station] = []
     @Published var isLoading = false
     @Published var appError: AppError?
     
+    // MARK: - Private Properties
     private let service: AllStationsServiceProtocol
     private let cityId: String
     
+    // MARK: - Init
     init(cityId: String,
          service: AllStationsServiceProtocol = AllStationsService(
             client: NetworkManager.shared.client,
@@ -25,6 +30,7 @@ final class StationPickerViewModel: ObservableObject {
              self.service = service
          }
     
+    // MARK: - Public Methods
     func loadStations() async {
         isLoading = true
         appError = nil

@@ -6,15 +6,20 @@
 //
 import SwiftUI
 
+// MARK: - View
 struct FiltersView: View {
+    
+    // MARK: - Environment
     @Environment(\.dismiss) private var dismiss
     
+    // MARK: - State
     @State private var morning = false
     @State private var day = false
     @State private var evening = false
     @State private var night = false
     @State private var withTransfers = true
     
+    // MARK: - Body
     var body: some View {
         Form {
             Section("Время отправления") {

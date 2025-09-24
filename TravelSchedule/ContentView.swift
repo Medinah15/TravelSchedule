@@ -26,6 +26,7 @@ struct ContentView: View {
             testFetchCarrier()
             testFetchAllStations()
             testFetchCopyrightInfo()
+            testFetchMoscowToPetersburg()
         }
     }
     
@@ -38,7 +39,7 @@ struct ContentView: View {
                 )
                 let service = NearestStationsService(
                     client: client,
-                    apikey: Config.yandexAPIKey 
+                    apikey: Config.yandexAPIKey
                 )
                 
                 print("Fetching stations...")
@@ -65,7 +66,6 @@ struct ContentView: View {
                 )
                 
                 let service = SearchService(
-                    client: client,
                     apikey: Config.yandexAPIKey
                 )
                 
@@ -235,6 +235,39 @@ struct ContentView: View {
                 print("Successfully fetched copyright info: \(copyright)")
             } catch {
                 print("Error fetching copyright info: \(error)")
+            }
+        }
+    }
+    func testFetchMoscowToPetersburg() {
+        Task {
+            do {
+                let client = Client(
+                    serverURL: try Servers.Server1.url(),
+                    transport: URLSessionTransport()
+                )
+                
+                let service = SearchService(
+                    apikey: Config.yandexAPIKey
+                )
+                
+                print("Fetching schedule Moscow → SPB...")
+                
+                let schedule = try await service.getSchedule(
+                    from: "s2000003", 
+                    to: "s9602496"
+                )
+                
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                
+                print("✅ Successfully fetched schedule:")
+                for seg in schedule.segments ?? [] {
+                    let dep = seg.departure.map { formatter.string(from: $0) } ?? "?"
+                    let arr = seg.arrival.map { formatter.string(from: $0) } ?? "?"
+                    print("🔹 \(seg.thread?.title ?? "?") \(dep) → \(arr)")
+                }
+            } catch {
+                print("❌ Error fetching schedule: \(error)")
             }
         }
     }

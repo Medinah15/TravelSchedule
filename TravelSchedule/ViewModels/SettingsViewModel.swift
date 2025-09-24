@@ -7,11 +7,15 @@
 
 import Foundation
 
+// MARK: - ViewModel
 @MainActor
 final class SettingsViewModel: ObservableObject {
+    
+    // MARK: - Published Properties
     @Published var isLoading = false
     @Published var appError: AppError?
     
+    // MARK: - Public Methods
     func loadSettings() async {
         isLoading = true
         defer { isLoading = false }

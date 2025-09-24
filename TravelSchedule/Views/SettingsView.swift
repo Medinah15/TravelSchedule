@@ -6,9 +6,13 @@
 //
 import SwiftUI
 
+// MARK: - View
 struct SettingsView: View {
+    
+    // MARK: - Properties
     @StateObject private var viewModel = SettingsViewModel()
     
+    // MARK: - Body
     var body: some View {
         VStack {
             if viewModel.isLoading {
@@ -25,6 +29,7 @@ struct SettingsView: View {
         }
     }
     
+    // MARK: - Helpers
     private func mapError(_ error: AppError) -> ErrorType {
         switch error {
         case .noInternet: return .noInternet
