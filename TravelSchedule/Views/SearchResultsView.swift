@@ -104,6 +104,10 @@ struct SearchResultsView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         
+        .navigationDestination(isPresented: $showFilters) {
+            FiltersView()
+        }
+        
         .task {
             await viewModel.loadResults(from: fromCode, to: toCode)
         }
