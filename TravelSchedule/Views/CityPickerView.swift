@@ -17,8 +17,7 @@ struct CityPickerView: View {
     
     // MARK: - Computed
     var filteredCities: [City] {
-        if searchText.isEmpty { return viewModel.cities }
-        return viewModel.cities.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+        searchText.isEmpty ? viewModel.cities : viewModel.cities.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
     }
     
     // MARK: - Body
@@ -30,7 +29,7 @@ struct CityPickerView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(Color("BlackUniversal"))
+                        .foregroundStyle(Color("BlackUniversal"))
                 }
                 .padding(.leading, 8)
                 .padding(.vertical, 11)
@@ -39,7 +38,7 @@ struct CityPickerView: View {
                 
                 Text("Выбор города")
                     .font(.system(size: 17, weight: .bold))
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                 
                 Spacer()
                 
@@ -51,17 +50,17 @@ struct CityPickerView: View {
             
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(Color("GrayUniversal"))
+                    .foregroundStyle(Color("GrayUniversal"))
                 TextField("Введите запрос", text: $searchText)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                 if !searchText.isEmpty {
                     Button {
                         searchText = ""
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(Color("GrayUniversal"))
+                            .foregroundStyle(Color("GrayUniversal"))
                     }
                     .buttonStyle(.plain)
                 }
@@ -85,7 +84,7 @@ struct CityPickerView: View {
                 Spacer()
                 Text("Город не найден")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                 Spacer()
             } else {
                 List {
@@ -97,7 +96,7 @@ struct CityPickerView: View {
                                 Image(systemName: "chevron.right")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(Color("BlackUniversal"))
+                                    .foregroundStyle(Color("BlackUniversal"))
                                     .frame(width: 11, height: 19)
                             }
                             .frame(height: 58)

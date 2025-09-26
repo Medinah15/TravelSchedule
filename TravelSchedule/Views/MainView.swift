@@ -58,7 +58,7 @@ struct MainView: View {
                                 .font(.system(size: 17, weight: .bold))
                                 .frame(width: 150, height: 60)
                                 .background(Color("BlueUniversal"))
-                                .foregroundColor(Color("WhiteUniversal"))
+                                .foregroundStyle(Color("WhiteUniversal"))
                                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                         }
                     }

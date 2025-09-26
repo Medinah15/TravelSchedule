@@ -13,7 +13,7 @@ struct PrimaryButton: ButtonStyle {
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color.blue.cornerRadius(12))
-            .foregroundColor(.white)
+            .foregroundStyle(.white)
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
     }
 }

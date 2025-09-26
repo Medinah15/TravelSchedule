@@ -14,13 +14,13 @@ struct SegmentCard: View {
     
     private var transportIcon: String {
         switch segment.thread?.transport_type {
-        case "plane": return "airplane"
-        case "train": return "train.side.front.car"
-        case "suburban": return "tram.fill"
-        case "bus": return "bus"
-        case "water": return "ferry"
-        case "helicopter": return "helicopter"
-        default: return "questionmark.circle"
+        case "plane": "airplane"
+        case "train": "train.side.front.car"
+        case "suburban": "tram.fill"
+        case "bus": "bus"
+        case "water": "ferry"
+        case "helicopter": "helicopter"
+        default:"questionmark.circle"
         }
     }
     
@@ -52,12 +52,12 @@ struct SegmentCard: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(segment.thread?.carrier?.title ?? "Без названия")
                         .font(.system(size: 17))
-                        .foregroundColor(.black) 
+                        .foregroundStyle(.black)
                     
                     if let hasTransfers = segment.has_transfers, hasTransfers {
                         Text("С пересадкой")
                             .font(.system(size: 12))
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                     }
                 }
                 
@@ -66,7 +66,7 @@ struct SegmentCard: View {
                 if let dep = segment.departure {
                     Text(shortDateFormatter.string(from: dep))
                         .font(.system(size: 12))
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                 }
             }
             
@@ -75,7 +75,7 @@ struct SegmentCard: View {
                 if let dep = segment.departure {
                     Text(timeFormatter.string(from: dep))
                         .font(.system(size: 17))
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                 }
                 
                 ZStack {
@@ -86,7 +86,7 @@ struct SegmentCard: View {
                     if let duration = segment.duration {
                         Text(Self.formatDuration(duration))
                             .font(.system(size: 12))
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 3)
                             .background(Color("LightGray"))
@@ -97,7 +97,7 @@ struct SegmentCard: View {
                 if let arr = segment.arrival {
                     Text(timeFormatter.string(from: arr))
                         .font(.system(size: 17))
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                 }
             }
             .frame(height: 40)

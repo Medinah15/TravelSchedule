@@ -40,7 +40,7 @@ struct StationPickerView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(Color("BlackUniversal"))
+                        .foregroundStyle(Color("BlackUniversal"))
                 }
                 .padding(.leading, 8)
                 .padding(.vertical, 11)
@@ -49,7 +49,7 @@ struct StationPickerView: View {
                 
                 Text("Выбор станции")
                     .font(.system(size: 17, weight: .bold))
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                 
                 Spacer()
                 
@@ -61,17 +61,17 @@ struct StationPickerView: View {
             
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(Color("GrayUniversal"))
+                    .foregroundStyle(Color("GrayUniversal"))
                 
                 TextField("Введите запрос", text: $searchText)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                 
                 if !searchText.isEmpty {
                     Button { searchText = "" } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(Color("GrayUniversal"))
+                            .foregroundStyle(Color("GrayUniversal"))
                     }
                 }
             }
@@ -94,7 +94,7 @@ struct StationPickerView: View {
                 Spacer()
                 Text("Станции не найдены")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                 Spacer()
             } else {
                 List {
@@ -109,7 +109,7 @@ struct StationPickerView: View {
                                 Image(systemName: "chevron.right")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(Color("BlackUniversal"))
+                                    .foregroundStyle(Color("BlackUniversal"))
                                     .frame(width: 11, height: 19)
                             }
                             .frame(height: 58)

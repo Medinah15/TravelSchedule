@@ -28,7 +28,7 @@ struct SearchResultsView: View {
             HStack {
                 Text("\(fromTitle) → \(toTitle)")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer()
             }
@@ -40,16 +40,11 @@ struct SearchResultsView: View {
                 Spacer()
                 ProgressView("Загружаем рейсы…")
                 Spacer()
-            } else if let appError = viewModel.appError {
-                Spacer()
-                Text("Ошибка загрузки")
-                    .foregroundColor(Color("RedUniversal"))
-                Spacer()
             } else if viewModel.results.isEmpty {
                 Spacer()
                 Text("Вариантов нет")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color("BlackUniversal"))
+                    .foregroundStyle(Color("BlackUniversal"))
                 Spacer()
             } else {
                 ScrollView {
@@ -59,8 +54,7 @@ struct SearchResultsView: View {
                                 .contentShape(Rectangle())
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 16)
+                    .padding(16)
                     .padding(.bottom, 100)
                 }
             }
@@ -79,7 +73,7 @@ struct SearchResultsView: View {
                     .frame(maxWidth: .infinity, minHeight: 60)
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(Color("WhiteUniversal"))
+                .foregroundStyle(Color("WhiteUniversal"))
                 .background(Color("BlueUniversal"))
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .padding(.horizontal, 16)
@@ -98,7 +92,7 @@ struct SearchResultsView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                 }
             }
         }

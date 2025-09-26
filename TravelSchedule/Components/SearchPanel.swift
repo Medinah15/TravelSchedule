@@ -32,7 +32,7 @@ struct SearchPanel: View {
                     HStack {
                         Text(from.isEmpty ? "Откуда" : from)
                             .font(.system(size: 17, weight: .regular))
-                            .foregroundColor(from.isEmpty
+                            .foregroundStyle(from.isEmpty
                                              ? Color("GrayUniversal")
                                              :.black)
                         Spacer()
@@ -47,7 +47,7 @@ struct SearchPanel: View {
                     HStack {
                         Text(to.isEmpty ? "Куда" : to)
                             .font(.system(size: 17, weight: .regular))
-                            .foregroundColor(to.isEmpty
+                            .foregroundStyle(to.isEmpty
                                              ? Color("GrayUniversal")
                                              : .black)
                         Spacer()

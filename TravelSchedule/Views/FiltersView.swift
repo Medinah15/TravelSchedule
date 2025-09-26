@@ -15,7 +15,7 @@ struct FiltersView: View {
     @State private var day = false
     @State private var evening = false
     @State private var night = false
-    @State private var transfers: Bool? = nil
+    @State private var transfers: Bool? 
     
     // MARK: - Derived
     private var isApplyEnabled: Bool {
@@ -32,7 +32,7 @@ struct FiltersView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                 }
                 Spacer()
             }
@@ -41,7 +41,7 @@ struct FiltersView: View {
             
             Text("Время отправления")
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 27)
@@ -57,7 +57,7 @@ struct FiltersView: View {
             
             Text("Показывать варианты с пересадками")
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 35)
@@ -81,7 +81,7 @@ struct FiltersView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(isApplyEnabled ? Color("BlueUniversal") : Color.clear)
-                    .foregroundColor(isApplyEnabled ? Color("WhiteUniversal") : .clear)
+                    .foregroundStyle(isApplyEnabled ? Color("WhiteUniversal") : .clear)
                     .cornerRadius(16)
             }
             .disabled(!isApplyEnabled)
@@ -97,10 +97,10 @@ struct FiltersView: View {
     private func timeRow(title: String, isOn: Binding<Bool>) -> some View {
         Button(action: { isOn.wrappedValue.toggle() }) {
             HStack {
-                Text(title).foregroundColor(.primary)
+                Text(title).foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: isOn.wrappedValue ? "checkmark.square.fill" : "square")
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .font(.system(size: 20))
             }
         }
@@ -109,10 +109,10 @@ struct FiltersView: View {
     private func transferRow(title: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack {
-                Text(title).foregroundColor(.primary)
+                Text(title).foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: selected ? "largecircle.fill.circle" : "circle")
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .font(.system(size: 20))
             }
         }

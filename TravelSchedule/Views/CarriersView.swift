@@ -39,7 +39,7 @@ struct CarriersView: View {
                     if let code = carrier.code {
                         Text("Код: \(code)")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     
                     if let phone = carrier.phone {
@@ -55,7 +55,7 @@ struct CarriersView: View {
                 .padding()
             } else {
                 Text("Перевозчик не найден")
-                    .foregroundColor(Color("GrayUniversal"))
+                    .foregroundStyle(Color("GrayUniversal"))
             }
         }
         .navigationTitle("Перевозчик")
