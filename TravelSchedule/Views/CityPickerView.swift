@@ -3,7 +3,6 @@
 //  TravelSchedule
 //
 //  Created by Medina Huseynova on 19.09.25.
-
 import SwiftUI
 
 // MARK: - View
@@ -31,7 +30,7 @@ struct CityPickerView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(.black)
+                        .foregroundColor(Color("BlackUniversal"))
                 }
                 .padding(.leading, 8)
                 .padding(.vertical, 11)
@@ -40,7 +39,7 @@ struct CityPickerView: View {
                 
                 Text("Выбор города")
                     .font(.system(size: 17, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("BlackUniversal"))
                 
                 Spacer()
                 
@@ -52,24 +51,24 @@ struct CityPickerView: View {
             
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                TextField("Поиск", text: $searchText)
+                    .foregroundColor(Color("GrayUniversal"))
+                TextField("Введите запрос", text: $searchText)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("BlackUniversal"))
                 if !searchText.isEmpty {
                     Button {
                         searchText = ""
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color("GrayUniversal"))
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 12)
-            .background(Color(.systemGray6))
+            .background(Color("Tertiary"))
             .cornerRadius(10)
             .padding(.horizontal, 16)
             .padding(.bottom, 8)
@@ -86,21 +85,19 @@ struct CityPickerView: View {
                 Spacer()
                 Text("Город не найден")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("BlackUniversal"))
                 Spacer()
             } else {
                 List {
                     ForEach(filteredCities) { city in
-                        Button {
-                            onSelect(city)
-                        } label: {
+                        Button { onSelect(city) } label: {
                             HStack {
                                 Text(city.title)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color("BlackUniversal"))
                                     .frame(width: 11, height: 19)
                             }
                             .frame(height: 58)
@@ -115,6 +112,7 @@ struct CityPickerView: View {
         }
         .navigationBarHidden(true)
         .task { await viewModel.loadCities() }
+        .toolbar(.hidden, for: .tabBar)  
     }
     
     // MARK: - Helpers

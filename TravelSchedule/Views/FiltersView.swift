@@ -15,7 +15,6 @@ struct FiltersView: View {
     @State private var day = false
     @State private var evening = false
     @State private var night = false
-    
     @State private var transfers: Bool? = nil
     
     // MARK: - Derived
@@ -33,8 +32,7 @@ struct FiltersView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(.black)
-                        .navigationBarBackButtonHidden(true)
+                        .foregroundColor(.primary)
                 }
                 Spacer()
             }
@@ -43,7 +41,7 @@ struct FiltersView: View {
             
             Text("Время отправления")
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 27)
@@ -59,7 +57,7 @@ struct FiltersView: View {
             
             Text("Показывать варианты с пересадками")
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 35)
@@ -77,35 +75,32 @@ struct FiltersView: View {
             
             Spacer()
             
-            Button(action: {
-                dismiss()
-            }) {
+            Button(action: { dismiss() }) {
                 Text("Применить")
                     .font(.system(size: 17, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(isApplyEnabled ? Color(red: 55/255, green: 114/255, blue: 231/255) : Color.clear)
-                
-                    .foregroundColor(.white)
+                    .background(isApplyEnabled ? Color("BlueUniversal") : Color.clear)
+                    .foregroundColor(isApplyEnabled ? Color("WhiteUniversal") : .clear)
                     .cornerRadius(16)
             }
             .disabled(!isApplyEnabled)
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
-        .background(Color.white.ignoresSafeArea())
+        .background(Color(.systemBackground).ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
     }
     
     // MARK: - Helpers
-    
     private func timeRow(title: String, isOn: Binding<Bool>) -> some View {
         Button(action: { isOn.wrappedValue.toggle() }) {
             HStack {
-                Text(title)
-                    .foregroundColor(.black)
+                Text(title).foregroundColor(.primary)
                 Spacer()
                 Image(systemName: isOn.wrappedValue ? "checkmark.square.fill" : "square")
-                    .foregroundColor(isOn.wrappedValue ? .black : .black)
+                    .foregroundColor(.primary)
                     .font(.system(size: 20))
             }
         }
@@ -114,11 +109,10 @@ struct FiltersView: View {
     private func transferRow(title: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack {
-                Text(title)
-                    .foregroundColor(.black)
+                Text(title).foregroundColor(.primary)
                 Spacer()
                 Image(systemName: selected ? "largecircle.fill.circle" : "circle")
-                    .foregroundColor(selected ? .black : .black)
+                    .foregroundColor(.primary)
                     .font(.system(size: 20))
             }
         }

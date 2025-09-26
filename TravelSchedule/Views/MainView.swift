@@ -57,8 +57,8 @@ struct MainView: View {
                             Text("Найти")
                                 .font(.system(size: 17, weight: .bold))
                                 .frame(width: 150, height: 60)
-                                .background(Color(red: 55/255, green: 114/255, blue: 231/255))
-                                .foregroundColor(.white)
+                                .background(Color("BlueUniversal"))
+                                .foregroundColor(Color("WhiteUniversal"))
                                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                         }
                     }
@@ -68,6 +68,7 @@ struct MainView: View {
             }
             .navigationDestination(for: Route.self) { route in
                 switch route {
+                    
                 case .cityPicker(let isFrom):
                     CityPickerView { city in
                         path.removeLast()
@@ -83,10 +84,10 @@ struct MainView: View {
                     StationPickerView(cityId: cityId) { station in
                         if isFrom {
                             fromStation = station
-                            fromTitle = station.title
+                            fromTitle = "\(cityTitle), \(station.title)"
                         } else {
                             toStation = station
-                            toTitle = station.title
+                            toTitle = "\(cityTitle), \(station.title)"
                         }
                         path.removeLast()
                     }
@@ -100,9 +101,11 @@ struct MainView: View {
                         toTitle: toTitle,
                         path: $path
                     )
+                    .toolbar(.hidden, for: .tabBar)
                     
                 case .carrierInfo(let code):
                     CarriersView(carrierCode: code)
+                        .toolbar(.hidden, for: .tabBar)  
                 }
             }
         }

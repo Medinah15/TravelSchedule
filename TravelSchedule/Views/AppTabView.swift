@@ -8,18 +8,15 @@
 import SwiftUI
 
 // MARK: - Tab Enum
-private enum AppTab: Int {
+private enum AppTab {
     case schedule
     case settings
 }
 
 // MARK: - View
 struct AppTabView: View {
-    
-    // MARK: - State
     @State private var selectedTab: AppTab = .schedule
     
-    // MARK: - Body
     var body: some View {
         TabView(selection: $selectedTab) {
             
@@ -27,7 +24,8 @@ struct AppTabView: View {
                 MainView()
             }
             .tabItem {
-                Image(selectedTab == .schedule ? "schedule_active" : "schedule_inactive")
+                Image("schedule")
+                    .renderingMode(.template)
             }
             .tag(AppTab.schedule)
             
@@ -35,9 +33,11 @@ struct AppTabView: View {
                 SettingsView()
             }
             .tabItem {
-                Image(selectedTab == .settings ? "settings_active" : "settings_inactive")
+                Image("settings")
+                    .renderingMode(.template)
             }
             .tag(AppTab.settings)
         }
+        .tint(Color("BlackUniversal"))
     }
 }

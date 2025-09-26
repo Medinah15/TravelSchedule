@@ -52,7 +52,7 @@ struct SegmentCard: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(segment.thread?.carrier?.title ?? "Без названия")
                         .font(.system(size: 17))
-                        .foregroundColor(.black)
+                        .foregroundColor(.black) 
                     
                     if let hasTransfers = segment.has_transfers, hasTransfers {
                         Text("С пересадкой")
@@ -80,7 +80,7 @@ struct SegmentCard: View {
                 
                 ZStack {
                     Capsule()
-                        .fill(Color.gray.opacity(0.5))
+                        .fill(Color("GrayUniversal"))
                         .frame(height: 1)
                     
                     if let duration = segment.duration {
@@ -89,7 +89,7 @@ struct SegmentCard: View {
                             .foregroundColor(.black)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 3)
-                            .background(Color.gray.opacity(0.2))
+                            .background(Color("LightGray"))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
@@ -105,7 +105,7 @@ struct SegmentCard: View {
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.gray.opacity(0.15))
+                .fill(Color("LightGray"))
                 .frame(height: 104)
         )
     }

@@ -40,7 +40,7 @@ struct StationPickerView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(.black)
+                        .foregroundColor(Color("BlackUniversal"))
                 }
                 .padding(.leading, 8)
                 .padding(.vertical, 11)
@@ -49,7 +49,7 @@ struct StationPickerView: View {
                 
                 Text("Выбор станции")
                     .font(.system(size: 17, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("BlackUniversal"))
                 
                 Spacer()
                 
@@ -61,23 +61,23 @@ struct StationPickerView: View {
             
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color("GrayUniversal"))
                 
-                TextField("Поиск", text: $searchText)
+                TextField("Введите запрос", text: $searchText)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("BlackUniversal"))
                 
                 if !searchText.isEmpty {
                     Button { searchText = "" } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color("GrayUniversal"))
                     }
                 }
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 12)
-            .background(Color(.systemGray6))
+            .background(Color("Tertiary"))
             .cornerRadius(10)
             .padding(.horizontal, 16)
             .padding(.bottom, 8)
@@ -94,7 +94,7 @@ struct StationPickerView: View {
                 Spacer()
                 Text("Станции не найдены")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("BlackUniversal"))
                 Spacer()
             } else {
                 List {
@@ -109,7 +109,7 @@ struct StationPickerView: View {
                                 Image(systemName: "chevron.right")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color("BlackUniversal"))
                                     .frame(width: 11, height: 19)
                             }
                             .frame(height: 58)
@@ -123,6 +123,7 @@ struct StationPickerView: View {
         }
         .navigationBarHidden(true)
         .task { await viewModel.loadStations() }
+        .toolbar(.hidden, for: .tabBar)  
     }
     
     // MARK: - Helpers

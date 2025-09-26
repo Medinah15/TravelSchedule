@@ -14,7 +14,7 @@ struct SplashView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color("BlackUniversal").ignoresSafeArea()
             Image("splash_screen")
                 .resizable()
                 .scaledToFill()

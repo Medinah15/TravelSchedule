@@ -21,10 +21,10 @@ struct SearchPanel: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(red: 55/255, green: 114/255, blue: 231/255))
+                .fill(Color("BlueUniversal"))
                 .frame(height: 128)
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.white)
+                .fill(Color("WhiteUniversal"))
                 .padding([.vertical, .leading], 16)
                 .padding(.trailing, 68)
             VStack(alignment: .leading, spacing: 0) {
@@ -33,8 +33,8 @@ struct SearchPanel: View {
                         Text(from.isEmpty ? "Откуда" : from)
                             .font(.system(size: 17, weight: .regular))
                             .foregroundColor(from.isEmpty
-                                             ? Color(red: 174/255, green: 175/255, blue: 180/255)
-                                             : .black)
+                                             ? Color("GrayUniversal")
+                                             :.black)
                         Spacer()
                     }
                     .padding(.horizontal, 16)
@@ -48,7 +48,7 @@ struct SearchPanel: View {
                         Text(to.isEmpty ? "Куда" : to)
                             .font(.system(size: 17, weight: .regular))
                             .foregroundColor(to.isEmpty
-                                             ? Color(red: 174/255, green: 175/255, blue: 180/255)
+                                             ? Color("GrayUniversal")
                                              : .black)
                         Spacer()
                     }

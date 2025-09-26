@@ -55,7 +55,7 @@ struct CarriersView: View {
                 .padding()
             } else {
                 Text("Перевозчик не найден")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color("GrayUniversal"))
             }
         }
         .navigationTitle("Перевозчик")

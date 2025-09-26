@@ -28,13 +28,13 @@ struct SearchResultsView: View {
             HStack {
                 Text("\(fromTitle) → \(toTitle)")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("BlackUniversal"))
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer()
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             
             if viewModel.isLoading {
                 Spacer()
@@ -43,13 +43,13 @@ struct SearchResultsView: View {
             } else if let appError = viewModel.appError {
                 Spacer()
                 Text("Ошибка загрузки")
-                    .foregroundColor(.red)
+                    .foregroundColor(Color("RedUniversal"))
                 Spacer()
             } else if viewModel.results.isEmpty {
                 Spacer()
                 Text("Вариантов нет")
-                    .font(.system(size: 17))
-                    .foregroundColor(.gray)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(Color("BlackUniversal"))
                 Spacer()
             } else {
                 ScrollView {
@@ -72,15 +72,15 @@ struct SearchResultsView: View {
                             .font(.system(size: 17, weight: .bold))
                         if filtersApplied {
                             Circle()
-                                .fill(Color.red)
+                                .fill(Color("RedUniversal"))
                                 .frame(width: 8, height: 8)
                         }
                     }
                     .frame(maxWidth: .infinity, minHeight: 60)
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(.white)
-                .background(Color.blue)
+                .foregroundColor(Color("WhiteUniversal"))
+                .background(Color("BlueUniversal"))
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
@@ -98,14 +98,15 @@ struct SearchResultsView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 17, height: 22)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                 }
             }
         }
-        .toolbar(.hidden, for: .tabBar)
+        .toolbar(.hidden, for: .tabBar)  
         
         .navigationDestination(isPresented: $showFilters) {
             FiltersView()
+                .toolbar(.hidden, for: .tabBar)
         }
         
         .task {
