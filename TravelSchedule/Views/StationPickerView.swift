@@ -123,15 +123,6 @@ struct StationPickerView: View {
         }
         .navigationBarHidden(true)
         .task { await viewModel.loadStations() }
-        .toolbar(.hidden, for: .tabBar)  
-    }
-    
-    // MARK: - Helpers
-    private func mapError(_ error: AppError) -> ErrorType {
-        switch error {
-        case .noInternet: return .noInternet
-        case .serverError: return .serverError
-        default: return .serverError
-        }
+        .toolbar(.hidden, for: .tabBar)
     }
 }

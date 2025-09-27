@@ -32,7 +32,21 @@ final class CarriersViewModel: ObservableObject {
         appError = nil
         do {
             let response = try await service.getCarrierInfo(code: code)
-            self.carrier = response.carriers?.first
+            
+            print("📦 CarrierResponse: \(response)")
+            
+            if let array = response.carriers, !array.isEmpty {
+                self.carrier = array.first
+            } else {
+                if let data = try? JSONEncoder().encode(response),
+                   let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let carrierDict = dict["carrier"] as? [String: Any],
+                   let carrierData = try? JSONSerialization.data(withJSONObject: carrierDict),
+                   let carrierObj = try? JSONDecoder().decode(Components.Schemas.Carrier.self, from: carrierData) {
+                    self.carrier = carrierObj
+                }
+            }
+            
         } catch let urlError as URLError {
             switch urlError.code {
             case .notConnectedToInternet:

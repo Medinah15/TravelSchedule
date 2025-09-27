@@ -10,12 +10,14 @@ import SwiftUI
 struct FiltersView: View {
     @Environment(\.dismiss) private var dismiss
     
+    let onApply: (Filters) -> Void
+    
     // MARK: - State
     @State private var morning = false
     @State private var day = false
     @State private var evening = false
     @State private var night = false
-    @State private var transfers: Bool? 
+    @State private var transfers: Bool?
     
     // MARK: - Derived
     private var isApplyEnabled: Bool {
@@ -25,7 +27,6 @@ struct FiltersView: View {
     // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
-            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -45,7 +46,6 @@ struct FiltersView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 27)
-            
             VStack(alignment: .leading, spacing: 38) {
                 timeRow(title: "Утро 06:00 – 12:00", isOn: $morning)
                 timeRow(title: "День 12:00 – 18:00", isOn: $day)
@@ -61,21 +61,25 @@ struct FiltersView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 35)
-            
             VStack(alignment: .leading, spacing: 38) {
-                transferRow(title: "Да", selected: transfers == true) {
-                    transfers = true
-                }
-                transferRow(title: "Нет", selected: transfers == false) {
-                    transfers = false
-                }
+                transferRow(title: "Да", selected: transfers == true) { transfers = true }
+                transferRow(title: "Нет", selected: transfers == false) { transfers = false }
             }
             .padding(.horizontal, 16)
             .padding(.top, 35)
             
             Spacer()
-            
-            Button(action: { dismiss() }) {
+            Button {
+                guard let transfers else { return }
+                onApply(Filters(
+                    morning: morning,
+                    day: day,
+                    evening: evening,
+                    night: night,
+                    transfers: transfers
+                ))
+                dismiss()
+            } label: {
                 Text("Применить")
                     .font(.system(size: 17, weight: .bold))
                     .frame(maxWidth: .infinity)
