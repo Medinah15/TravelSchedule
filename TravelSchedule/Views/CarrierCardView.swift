@@ -113,15 +113,6 @@ struct CarrierCardView: View {
             await viewModel.loadCarrier(code: carrierCode)
         }
     }
-    
-    // MARK: - Helpers
-    private func mapError(_ error: AppError) -> ErrorType {
-        switch error {
-        case .noInternet: return .noInternet
-        case .serverError: return .serverError
-        default: return .serverError
-        }
-    }
 }
 
 // MARK: - Preview
