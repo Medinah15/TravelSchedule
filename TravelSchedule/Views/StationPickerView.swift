@@ -123,7 +123,7 @@ struct StationPickerView: View {
         }
         .navigationBarHidden(true)
         .task { await viewModel.loadStations() }
-        .toolbar(.hidden, for: .tabBar)  
+        .toolbar(.hidden, for: .tabBar)
     }
     
     // MARK: - Helpers

@@ -104,8 +104,9 @@ struct MainView: View {
                     .toolbar(.hidden, for: .tabBar)
                     
                 case .carrierInfo(let code):
-                    CarriersView(carrierCode: code)
-                        .toolbar(.hidden, for: .tabBar)  
+                    CarrierCardView(carrierCode: code)
+                        .toolbar(.hidden, for: .tabBar)
+                    
                 }
             }
         }
