@@ -78,7 +78,7 @@ struct StoryPageView: View {
                 
                 .overlay(alignment: .topTrailing) {
                     Button(action: { dismiss() }) {
-                        Image("close")
+                        Image("closeButton")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
