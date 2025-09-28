@@ -19,6 +19,46 @@ struct MainView: View {
     @State private var pickFrom = true
     @State private var path = NavigationPath()
     
+    // Stories
+    @State private var stories: [Story] = [
+        Story(imageName: "story1",
+              title: "Text Text Text Text Text Text Text Text Text Text",
+              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
+              isViewed: false),
+        
+        Story(imageName: "story2",
+              title: "Text Text Text Text Text Text Text Text Text Text",
+              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
+              isViewed: false),
+        
+        Story(imageName: "story3",
+              title: "Text Text Text Text Text Text Text Text Text Text",
+              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
+              isViewed: false),
+        
+        Story(imageName: "story4",
+              title: "Text Text Text Text Text Text Text Text Text Text",
+              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
+              isViewed: false),
+        
+        Story(imageName: "story5",
+              title: "Text Text Text Text Text Text Text Text Text Text",
+              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
+              isViewed: false),
+        
+        Story(imageName: "story6",
+              title: "Text Text Text Text Text Text Text Text Text Text",
+              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
+              isViewed: false),
+        
+        Story(imageName: "story7",
+              title: "Text Text Text Text Text Text Text Text Text Text",
+              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
+              isViewed: false)
+    ]
+    @State private var showStories = false
+    @State private var selectedIndex = 0
+    
     // MARK: - Computed
     var canSearch: Bool { fromStation != nil && toStation != nil }
     
@@ -27,6 +67,21 @@ struct MainView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 24) {
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(stories.indices, id: \.self) { index in
+                                Button {
+                                    selectedIndex = index
+                                    showStories = true
+                                } label: {
+                                    StoriesRow(story: stories[index])
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                    }
                     
                     SearchPanel(
                         from: $fromTitle,
@@ -45,7 +100,7 @@ struct MainView: View {
                         }
                     )
                     .padding(.horizontal, 16)
-                    .padding(.top, 224)
+                    .padding(.top, 24)
                     
                     if canSearch {
                         NavigationLink(value: Route.searchResults(
@@ -104,9 +159,13 @@ struct MainView: View {
                     .toolbar(.hidden, for: .tabBar)
                     
                 case .carrierInfo(let code):
-                    CarriersView(carrierCode: code)
-                        .toolbar(.hidden, for: .tabBar)  
+                    CarrierCardView(carrierCode: code)
+                        .toolbar(.hidden, for: .tabBar)
                 }
+            }
+            
+            .fullScreenCover(isPresented: $showStories) {
+                StoriesView(stories: $stories, selectedIndex: $selectedIndex)
             }
         }
     }

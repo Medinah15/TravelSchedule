@@ -78,7 +78,7 @@ struct CityPickerView: View {
                 Spacer()
             } else if let appError = viewModel.appError {
                 Spacer()
-                ErrorView(type: mapError(appError))
+                ErrorView(type: appError.errorType)
                 Spacer()
             } else if filteredCities.isEmpty {
                 Spacer()
@@ -112,14 +112,5 @@ struct CityPickerView: View {
         .navigationBarHidden(true)
         .task { await viewModel.loadCities() }
         .toolbar(.hidden, for: .tabBar)  
-    }
-    
-    // MARK: - Helpers
-    private func mapError(_ error: AppError) -> ErrorType {
-        switch error {
-        case .noInternet: return .noInternet
-        case .serverError: return .serverError
-        default: return .serverError
-        }
     }
 }

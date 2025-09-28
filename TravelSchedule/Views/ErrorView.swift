@@ -7,25 +7,39 @@
 import SwiftUI
 
 // MARK: - Error Type
+
 enum ErrorType {
     case noInternet
     case serverError
+
+    var imageName: String {
+        switch self {
+        case .noInternet: "no_internet"
+        case .serverError: "server_error"
+        }
+    }
+
+    var message: String {
+        switch self {
+        case .noInternet: "Нет интернета"
+        case .serverError: "Ошибка сервера"
+        }
+    }
 }
 
 // MARK: - View
+
 struct ErrorView: View {
-    
-    // MARK: - Properties
     let type: ErrorType
     
-    // MARK: - Body
     var body: some View {
         VStack {
-            Image(type == .noInternet ? "no_internet" : "server_error")
+            Image(type.imageName)
                 .resizable()
                 .frame(width: 223, height: 223)
                 .padding()
-            Text(type == .noInternet ? "Нет интернета" : "Ошибка сервера")
+            
+            Text(type.message)
                 .font(.headline)
         }
     }
