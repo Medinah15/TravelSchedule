@@ -77,7 +77,7 @@ extension SearchResultsView {
             Spacer()
         } else if let appError = viewModel.appError {
                Spacer()
-               ErrorView(type: mapError(appError)) // ✅ показываем ошибку
+            ErrorView(type: appError.errorType)
                Spacer()
         } else if displayedResults.isEmpty {
             Spacer()

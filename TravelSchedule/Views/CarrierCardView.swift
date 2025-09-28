@@ -16,7 +16,7 @@ struct CarrierCardView: View {
     
     // MARK: - Body
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: .zero) {
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -41,7 +41,7 @@ struct CarrierCardView: View {
                 Spacer()
             } else if let appError = viewModel.appError {
                 Spacer()
-                ErrorView(type: mapError(appError))
+                ErrorView(type: appError.errorType)
                 Spacer()
             } else if let carrier = viewModel.carrier {
                 ScrollView {

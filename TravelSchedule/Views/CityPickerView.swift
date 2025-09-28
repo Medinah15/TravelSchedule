@@ -78,7 +78,7 @@ struct CityPickerView: View {
                 Spacer()
             } else if let appError = viewModel.appError {
                 Spacer()
-                ErrorView(type: mapError(appError))
+                ErrorView(type: appError.errorType)
                 Spacer()
             } else if filteredCities.isEmpty {
                 Spacer()
