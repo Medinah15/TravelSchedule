@@ -66,6 +66,7 @@ struct ContentView: View {
                 )
                 
                 let service = SearchService(
+                    client: client,
                     apikey: Config.yandexAPIKey
                 )
                 
@@ -247,6 +248,7 @@ struct ContentView: View {
                 )
                 
                 let service = SearchService(
+                    client: client,
                     apikey: Config.yandexAPIKey
                 )
                 

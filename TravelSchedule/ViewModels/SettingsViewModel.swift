@@ -12,16 +12,22 @@ import Foundation
 final class SettingsViewModel: ObservableObject {
     
     // MARK: - Published Properties
-    @Published var isLoading = false
+    @Published var isLoading: Bool = false
     @Published var appError: AppError?
     
     // MARK: - Public Methods
     func loadSettings() async {
         isLoading = true
+        appError = nil
+        
         defer { isLoading = false }
         
-        await Task.sleep(1_000_000_000) 
-        
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            
+        } catch {
+            appError = .unknown
+        }
         appError = .noInternet
     }
 }

@@ -117,5 +117,5 @@ struct CarrierCardView: View {
 
 // MARK: - Preview
 #Preview {
-    CarrierCardView(carrierCode: "rzd") 
+    CarrierCardView(carrierCode: "rzd")
 }

@@ -15,23 +15,14 @@ final class CityPickerViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var appError: AppError?
     
-    // MARK: - Private Properties
-    private let service: AllStationsServiceProtocol
-    
-    // MARK: - Init
-    init(service: AllStationsServiceProtocol = AllStationsService(
-        client: NetworkManager.shared.client,
-        apikey: NetworkManager.shared.apiKey
-    )) {
-        self.service = service
-    }
-    
     // MARK: - Public Methods
     func loadCities() async {
         isLoading = true
         appError = nil
         do {
-            let data = try await service.getAllStations()
+            // ⬇️ теперь используем NetworkClient.shared
+            let data = try await NetworkClient.shared.fetchAllStations()
+            
             let settlements = data.countries?
                 .flatMap { $0.regions ?? [] }
                 .flatMap { $0.settlements ?? [] } ?? []
@@ -53,8 +44,20 @@ final class CityPickerViewModel: ObservableObject {
             }
             
             self.cities = uniqueCities.sorted { $0.title < $1.title }
+            
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet:
+                appError = .noInternet
+            case .badServerResponse, .cannotConnectToHost:
+                appError = .serverError
+            default:
+                appError = .unknown
+            }
         } catch {
+            appError = .unknown
         }
+        
         isLoading = false
     }
 }

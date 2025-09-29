@@ -4,8 +4,9 @@
 //
 //  Created by Medina Huseynova on 27.09.25.
 //
+import Foundation
 
-struct Filters: Equatable {
+struct Filters: Equatable, Sendable {
     var morning: Bool
     var day: Bool
     var evening: Bool

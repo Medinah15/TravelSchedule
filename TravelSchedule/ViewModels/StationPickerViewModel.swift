@@ -13,36 +13,33 @@ final class StationPickerViewModel: ObservableObject {
     
     // MARK: - Published Properties
     @Published var stations: [Station] = []
-    @Published var isLoading = false
+    @Published var isLoading: Bool = false
     @Published var appError: AppError?
     
     // MARK: - Private Properties
-    private let service: AllStationsServiceProtocol
     private let cityId: String
     
     // MARK: - Init
-    init(cityId: String,
-         service: AllStationsServiceProtocol = AllStationsService(
-            client: NetworkManager.shared.client,
-            apikey: NetworkManager.shared.apiKey
-         )) {
-             self.cityId = cityId
-             self.service = service
-         }
+    init(cityId: String) {
+        self.cityId = cityId
+    }
     
     // MARK: - Public Methods
     func loadStations() async {
         isLoading = true
         appError = nil
+        defer { isLoading = false }
+        
         do {
-            let data = try await service.getAllStations()
+            
+            let data = try await NetworkClient.shared.fetchAllStations()
+            
             let settlements = data.countries?
                 .flatMap { $0.regions ?? [] }
                 .flatMap { $0.settlements ?? [] } ?? []
             
             guard let selectedCity = settlements.first(where: { $0.codes?.yandex_code == cityId }) else {
                 self.stations = []
-                isLoading = false
                 return
             }
             
@@ -53,9 +50,18 @@ final class StationPickerViewModel: ObservableObject {
             } ?? []
             
             self.stations = stationsInCity.sorted { $0.title < $1.title }
+            
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet:
+                appError = .noInternet
+            case .badServerResponse, .cannotConnectToHost:
+                appError = .serverError
+            default:
+                appError = .unknown
+            }
         } catch {
             appError = .serverError
         }
-        isLoading = false
     }
 }

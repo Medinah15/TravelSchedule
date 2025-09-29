@@ -76,9 +76,9 @@ extension SearchResultsView {
             ProgressView("Загружаем рейсы…")
             Spacer()
         } else if let appError = viewModel.appError {
-               Spacer()
+            Spacer()
             ErrorView(type: appError.errorType)
-               Spacer()
+            Spacer()
         } else if displayedResults.isEmpty {
             Spacer()
             Text("Вариантов нет")
