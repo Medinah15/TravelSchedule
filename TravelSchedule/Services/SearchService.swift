@@ -47,7 +47,7 @@ final class SearchService: SearchServiceProtocol {
         }
         
         let json = try okResponse.body.json
-        print("📦 RAW SearchResponse: \(json)")
+        print(" RAW SearchResponse: \(json)")
         return json
     }
 }

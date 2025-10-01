@@ -7,9 +7,9 @@
 import Foundation
 
 struct Filters: Equatable, Sendable {
-    var morning: Bool
-    var day: Bool
-    var evening: Bool
-    var night: Bool
-    var transfers: Bool
+    let morning: Bool
+    let day: Bool
+    let evening: Bool
+    let night: Bool
+    let transfers: Bool
 }

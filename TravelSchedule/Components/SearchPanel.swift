@@ -5,6 +5,7 @@
 //  Created by Medina Huseynova on 20.09.25.
 import SwiftUI
 
+// MARK: - Search Panel
 struct SearchPanel: View {
     
     // MARK: - Bindings
@@ -25,6 +26,7 @@ struct SearchPanel: View {
                 .frame(height: 128)
             
             VStack(spacing: 0) {
+                
                 Button(action: onFromTap) {
                     Text(from.isEmpty ? "Откуда" : from)
                         .font(.system(size: 17, weight: .regular))

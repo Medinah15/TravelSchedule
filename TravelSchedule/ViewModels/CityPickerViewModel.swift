@@ -10,17 +10,22 @@ import SwiftUI
 @MainActor
 final class CityPickerViewModel: ObservableObject {
     
-    // MARK: - Published Properties
     @Published var cities: [City] = []
     @Published var isLoading = false
     @Published var appError: AppError?
+    @Published var searchText: String = ""
     
-    // MARK: - Public Methods
+    var filteredCities: [City] {
+        guard !searchText.isEmpty else { return cities }
+        return cities.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+    }
+    
     func loadCities() async {
         isLoading = true
         appError = nil
+        defer { isLoading = false }
+        
         do {
-            // ⬇️ теперь используем NetworkClient.shared
             let data = try await NetworkClient.shared.fetchAllStations()
             
             let settlements = data.countries?
@@ -35,12 +40,9 @@ final class CityPickerViewModel: ObservableObject {
             
             var seen = Set<String>()
             let uniqueCities = citiesWithDuplicates.filter { city in
-                if seen.contains(city.id) {
-                    return false
-                } else {
-                    seen.insert(city.id)
-                    return true
-                }
+                if seen.contains(city.id) { return false }
+                seen.insert(city.id)
+                return true
             }
             
             self.cities = uniqueCities.sorted { $0.title < $1.title }
@@ -57,7 +59,5 @@ final class CityPickerViewModel: ObservableObject {
         } catch {
             appError = .unknown
         }
-        
-        isLoading = false
     }
 }

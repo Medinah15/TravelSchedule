@@ -6,27 +6,15 @@
 //
 import SwiftUI
 
-// MARK: - View
 struct FiltersView: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel = FiltersViewModel()
     
     let onApply: (Filters) -> Void
     
-    // MARK: - State
-    @State private var morning = false
-    @State private var day = false
-    @State private var evening = false
-    @State private var night = false
-    @State private var transfers: Bool?
-    
-    // MARK: - Derived
-    private var isApplyEnabled: Bool {
-        (morning || day || evening || night) && transfers != nil
-    }
-    
-    // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
+            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -46,11 +34,12 @@ struct FiltersView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 27)
+            
             VStack(alignment: .leading, spacing: 38) {
-                timeRow(title: "Утро 06:00 – 12:00", isOn: $morning)
-                timeRow(title: "День 12:00 – 18:00", isOn: $day)
-                timeRow(title: "Вечер 18:00 – 00:00", isOn: $evening)
-                timeRow(title: "Ночь 00:00 – 06:00", isOn: $night)
+                TimeRowView(title: "Утро 06:00 – 12:00", isOn: $viewModel.morning)
+                TimeRowView(title: "День 12:00 – 18:00", isOn: $viewModel.day)
+                TimeRowView(title: "Вечер 18:00 – 00:00", isOn: $viewModel.evening)
+                TimeRowView(title: "Ночь 00:00 – 06:00", isOn: $viewModel.night)
             }
             .padding(.horizontal, 16)
             .padding(.top, 35)
@@ -61,64 +50,41 @@ struct FiltersView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.top, 35)
+            
             VStack(alignment: .leading, spacing: 38) {
-                transferRow(title: "Да", selected: transfers == true) { transfers = true }
-                transferRow(title: "Нет", selected: transfers == false) { transfers = false }
+                TransferRowView(title: "Да",
+                                isSelected: viewModel.transfers == true,
+                                onTap: { viewModel.selectTransfer(true) })
+                
+                TransferRowView(title: "Нет",
+                                isSelected: viewModel.transfers == false,
+                                onTap: { viewModel.selectTransfer(false) })
             }
             .padding(.horizontal, 16)
             .padding(.top, 35)
             
             Spacer()
+            
             Button {
-                guard let transfers else { return }
-                onApply(Filters(
-                    morning: morning,
-                    day: day,
-                    evening: evening,
-                    night: night,
-                    transfers: transfers
-                ))
-                dismiss()
+                if let filters = viewModel.buildFilters() {
+                    onApply(filters)
+                    dismiss()
+                }
             } label: {
                 Text("Применить")
                     .font(.system(size: 17, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(isApplyEnabled ? Color("BlueUniversal") : Color.clear)
-                    .foregroundStyle(isApplyEnabled ? Color("WhiteUniversal") : .clear)
+                    .background(viewModel.isApplyEnabled ? Color("BlueUniversal") : Color.clear)
+                    .foregroundStyle(viewModel.isApplyEnabled ? Color("WhiteUniversal") : .clear)
                     .cornerRadius(16)
             }
-            .disabled(!isApplyEnabled)
+            .disabled(!viewModel.isApplyEnabled)
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
         .background(Color(.systemBackground).ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
-    }
-    
-    // MARK: - Helpers
-    private func timeRow(title: String, isOn: Binding<Bool>) -> some View {
-        Button(action: { isOn.wrappedValue.toggle() }) {
-            HStack {
-                Text(title).foregroundStyle(.primary)
-                Spacer()
-                Image(systemName: isOn.wrappedValue ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(.primary)
-                    .font(.system(size: 20))
-            }
-        }
-    }
-    
-    private func transferRow(title: String, selected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack {
-                Text(title).foregroundStyle(.primary)
-                Spacer()
-                Image(systemName: selected ? "largecircle.fill.circle" : "circle")
-                    .foregroundStyle(.primary)
-                    .font(.system(size: 20))
-            }
-        }
     }
 }

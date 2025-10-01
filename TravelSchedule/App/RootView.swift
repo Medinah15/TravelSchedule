@@ -20,13 +20,13 @@ struct RootView: View {
             }
         }
         .preferredColorScheme(appTheme == AppTheme.dark.rawValue ? .dark : .light) 
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                withAnimation {
-                    showMain = true
-                }
+        .task {
+            try? await Task.sleep(nanoseconds: 2_000_000_000) 
+            withAnimation {
+                showMain = true
             }
         }
+        
     }
 }
 

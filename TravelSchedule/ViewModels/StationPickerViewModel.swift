@@ -5,6 +5,7 @@
 //  Created by Medina Huseynova on 20.09.25.
 //
 
+import Foundation
 import SwiftUI
 
 // MARK: - ViewModel
@@ -15,6 +16,12 @@ final class StationPickerViewModel: ObservableObject {
     @Published var stations: [Station] = []
     @Published var isLoading: Bool = false
     @Published var appError: AppError?
+    @Published var searchText: String = ""
+    
+    // MARK: - Computed Properties
+    var filteredStations: [Station] {
+        filterStations(searchText: searchText)
+    }
     
     // MARK: - Private Properties
     private let cityId: String
@@ -31,7 +38,6 @@ final class StationPickerViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            
             let data = try await NetworkClient.shared.fetchAllStations()
             
             let settlements = data.countries?
@@ -63,5 +69,11 @@ final class StationPickerViewModel: ObservableObject {
         } catch {
             appError = .serverError
         }
+    }
+    
+    // MARK: - Business Logic (Filter)
+    func filterStations(searchText: String) -> [Station] {
+        guard !searchText.isEmpty else { return stations }
+        return stations.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
     }
 }

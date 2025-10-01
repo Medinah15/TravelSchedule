@@ -262,14 +262,14 @@ struct ContentView: View {
                 let formatter = DateFormatter()
                 formatter.dateFormat = "HH:mm"
                 
-                print("✅ Successfully fetched schedule:")
+                print(" Successfully fetched schedule:")
                 for seg in schedule.segments ?? [] {
                     let dep = seg.departure.map { formatter.string(from: $0) } ?? "?"
                     let arr = seg.arrival.map { formatter.string(from: $0) } ?? "?"
-                    print("🔹 \(seg.thread?.title ?? "?") \(dep) → \(arr)")
+                    print(" \(seg.thread?.title ?? "?") \(dep) → \(arr)")
                 }
             } catch {
-                print("❌ Error fetching schedule: \(error)")
+                print(" Error fetching schedule: \(error)")
             }
         }
     }

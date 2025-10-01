@@ -23,12 +23,12 @@ final class CarriersViewModel: ObservableObject {
         do {
             let response = try await NetworkClient.shared.fetchCarrier(code: code)
             
-            print("📦 CarrierResponse: \(response)")
+            print(" CarrierResponse: \(response)")
             
             if let array = response.carriers, !array.isEmpty {
                 self.carrier = array.first
             } else {
-                // 🔹 fallback если carrier внутри словаря
+                
                 if let data = try? JSONEncoder().encode(response),
                    let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let carrierDict = dict["carrier"] as? [String: Any],
