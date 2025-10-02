@@ -3,16 +3,13 @@
 //  TravelSchedule
 //
 //  Created by Medina Huseynova on 20.09.25.
-
 import SwiftUI
 
 // MARK: - View
 struct SearchResultsView: View {
     
-    // MARK: - Properties
     let fromCode: String
     let toCode: String
-    
     let fromTitle: String
     let toTitle: String
     
@@ -20,13 +17,7 @@ struct SearchResultsView: View {
     @StateObject private var viewModel = SearchResultsViewModel()
     @Environment(\.dismiss) private var dismiss
     
-    @State private var showFilters = false
-    @State private var filtersApplied = false
-    @State private var originalResults: [Components.Schemas.Segment] = []
-    @State private var displayedResults: [Components.Schemas.Segment] = []
-    @State private var filters: Filters?
     
-    // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
             headerView
@@ -38,19 +29,9 @@ struct SearchResultsView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar { backButton }
         .toolbar(.hidden, for: .tabBar)
-        .navigationDestination(isPresented: $showFilters) {
-            FiltersView { newFilters in
-                self.filters = newFilters
-                self.filtersApplied = true
-                self.applyFilters()
-            }
-            .toolbar(.hidden, for: .tabBar)
-        }
         .task {
             await viewModel.loadResults(from: fromCode, to: toCode)
-            originalResults = viewModel.results
-            displayedResults = viewModel.results
-            if filters != nil { applyFilters() }
+            if viewModel.filters != nil { viewModel.applyFilters(viewModel.filters) }
         }
     }
 }
@@ -76,10 +57,10 @@ extension SearchResultsView {
             ProgressView("Загружаем рейсы…")
             Spacer()
         } else if let appError = viewModel.appError {
-               Spacer()
+            Spacer()
             ErrorView(type: appError.errorType)
-               Spacer()
-        } else if displayedResults.isEmpty {
+            Spacer()
+        } else if viewModel.displayedResults.isEmpty {
             Spacer()
             Text("Вариантов нет")
                 .font(.system(size: 24, weight: .bold))
@@ -88,15 +69,14 @@ extension SearchResultsView {
         } else {
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(displayedResults, id: \.thread?.uid) { segment in
-                        SegmentCard(segment: segment)
+                    ForEach(viewModel.displayedResults, id: \.thread?.uid) { segment in
+                        SegmentCard(viewModel: SegmentViewModel(segment: segment))
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 if let code = segment.thread?.carrier?.code {
                                     path.append(Route.carrierInfo(code: String(code)))
                                 }
                             }
-                        
                     }
                 }
                 .padding(16)
@@ -106,12 +86,14 @@ extension SearchResultsView {
     }
     
     @ViewBuilder private var filterButton: some View {
-        if !originalResults.isEmpty {
-            Button { showFilters = true } label: {
+        if !viewModel.originalResults.isEmpty {
+            Button {
+                path.append(Route.filters)
+            } label: {
                 HStack(spacing: 4) {
                     Text("Уточнить время")
                         .font(.system(size: 17, weight: .bold))
-                    if filtersApplied {
+                    if viewModel.filtersApplied {
                         Circle()
                             .fill(Color("RedUniversal"))
                             .frame(width: 8, height: 8)
@@ -137,36 +119,6 @@ extension SearchResultsView {
                     .frame(width: 17, height: 22)
                     .foregroundStyle(.primary)
             }
-        }
-    }
-}
-
-// MARK: - Filtering
-extension SearchResultsView {
-    private func applyFilters() {
-        guard let filters else {
-            displayedResults = originalResults
-            return
-        }
-        
-        displayedResults = originalResults.filter { seg in
-            
-            if let hasTransfers = seg.has_transfers {
-                if hasTransfers != filters.transfers { return false }
-            } else {
-                if filters.transfers != false { return false }
-            }
-            
-            guard let dep = seg.departure else { return false }
-            let h = Calendar.current.component(.hour, from: dep)
-            
-            var timeMatches = false
-            if filters.morning { timeMatches = timeMatches || (h >= 6 && h < 12) }
-            if filters.day     { timeMatches = timeMatches || (h >= 12 && h < 18) }
-            if filters.evening { timeMatches = timeMatches || (h >= 18 && h < 24) }
-            if filters.night   { timeMatches = timeMatches || (h >= 0 && h < 6) }
-            
-            return timeMatches
         }
     }
 }

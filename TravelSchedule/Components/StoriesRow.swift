@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct StoriesRow: View {
-    @ObservedObject var story: Story
+    let story: Story  
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -34,7 +34,7 @@ struct StoriesRow: View {
                 .font(.system(size: 12, weight: .bold))
                 .foregroundColor(.white)
                 .padding(6)
-                .lineLimit(2)
+                .lineLimit(3)
         }
         .frame(width: 100, height: 150)
     }

@@ -15,29 +15,20 @@ final class CarriersViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var appError: AppError?
     
-    // MARK: - Private Properties
-    private let service: CarrierInfoServiceProtocol
-    
-    // MARK: - Init
-    init(service: CarrierInfoServiceProtocol = CarrierInfoService(
-        client: NetworkManager.shared.client,
-        apikey: NetworkManager.shared.apiKey
-    )) {
-        self.service = service
-    }
-    
     // MARK: - Public Methods
     func loadCarrier(code: String) async {
         isLoading = true
         appError = nil
+        
         do {
-            let response = try await service.getCarrierInfo(code: code)
+            let response = try await NetworkClient.shared.fetchCarrier(code: code)
             
-            print("📦 CarrierResponse: \(response)")
+            print(" CarrierResponse: \(response)")
             
             if let array = response.carriers, !array.isEmpty {
                 self.carrier = array.first
             } else {
+                
                 if let data = try? JSONEncoder().encode(response),
                    let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let carrierDict = dict["carrier"] as? [String: Any],
@@ -59,6 +50,7 @@ final class CarriersViewModel: ObservableObject {
         } catch {
             appError = .unknown
         }
+        
         isLoading = false
     }
 }

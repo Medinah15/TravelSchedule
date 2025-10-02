@@ -7,22 +7,14 @@ import SwiftUI
 
 // MARK: - View
 struct CityPickerView: View {
-    
-    // MARK: - Properties
     @Environment(\.dismiss) private var dismiss
-    @State private var searchText = ""
     @StateObject private var viewModel = CityPickerViewModel()
     
     let onSelect: (City) -> Void
     
-    // MARK: - Computed
-    var filteredCities: [City] {
-        searchText.isEmpty ? viewModel.cities : viewModel.cities.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
-    }
-    
-    // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
+            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -42,8 +34,7 @@ struct CityPickerView: View {
                 
                 Spacer()
                 
-                Color.clear
-                    .frame(width: 17, height: 22)
+                Color.clear.frame(width: 17, height: 22)
                     .padding(.trailing, 8)
             }
             .padding(.bottom, 4)
@@ -51,14 +42,12 @@ struct CityPickerView: View {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(Color("GrayUniversal"))
-                TextField("Введите запрос", text: $searchText)
+                TextField("Введите запрос", text: $viewModel.searchText)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .foregroundStyle(Color("BlackUniversal"))
-                if !searchText.isEmpty {
-                    Button {
-                        searchText = ""
-                    } label: {
+                if !viewModel.searchText.isEmpty {
+                    Button { viewModel.searchText = "" } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(Color("GrayUniversal"))
                     }
@@ -80,7 +69,7 @@ struct CityPickerView: View {
                 Spacer()
                 ErrorView(type: appError.errorType)
                 Spacer()
-            } else if filteredCities.isEmpty {
+            } else if viewModel.filteredCities.isEmpty {
                 Spacer()
                 Text("Город не найден")
                     .font(.system(size: 24, weight: .bold))
@@ -88,7 +77,7 @@ struct CityPickerView: View {
                 Spacer()
             } else {
                 List {
-                    ForEach(filteredCities) { city in
+                    ForEach(viewModel.filteredCities) { city in
                         Button { onSelect(city) } label: {
                             HStack {
                                 Text(city.title)
@@ -111,6 +100,6 @@ struct CityPickerView: View {
         }
         .navigationBarHidden(true)
         .task { await viewModel.loadCities() }
-        .toolbar(.hidden, for: .tabBar)  
+        .toolbar(.hidden, for: .tabBar)
     }
 }

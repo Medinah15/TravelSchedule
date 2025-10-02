@@ -8,9 +8,6 @@ import SwiftUI
 // MARK: - View
 struct SplashView: View {
     
-    // MARK: - State
-    @State private var showMain = false
-    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -19,16 +16,6 @@ struct SplashView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                withAnimation {
-                    showMain = true
-                }
-            }
-        }
-        .fullScreenCover(isPresented: $showMain) {
-            AppTabView()
         }
     }
 }

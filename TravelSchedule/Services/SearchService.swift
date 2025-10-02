@@ -24,10 +24,7 @@ final class SearchService: SearchServiceProtocol {
     private let apikey: String
     
     // MARK: - Init
-    init(
-        client: Client = NetworkManager.shared.client,
-        apikey: String = NetworkManager.shared.apiKey
-    ) {
+    init(client: Client, apikey: String) {
         self.client = client
         self.apikey = apikey
     }
@@ -50,7 +47,7 @@ final class SearchService: SearchServiceProtocol {
         }
         
         let json = try okResponse.body.json
-        print("📦 RAW SearchResponse: \(json)")
+        print(" RAW SearchResponse: \(json)")
         return json
     }
 }

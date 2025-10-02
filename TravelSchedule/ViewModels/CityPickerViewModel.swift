@@ -10,28 +10,24 @@ import SwiftUI
 @MainActor
 final class CityPickerViewModel: ObservableObject {
     
-    // MARK: - Published Properties
     @Published var cities: [City] = []
     @Published var isLoading = false
     @Published var appError: AppError?
+    @Published var searchText: String = ""
     
-    // MARK: - Private Properties
-    private let service: AllStationsServiceProtocol
-    
-    // MARK: - Init
-    init(service: AllStationsServiceProtocol = AllStationsService(
-        client: NetworkManager.shared.client,
-        apikey: NetworkManager.shared.apiKey
-    )) {
-        self.service = service
+    var filteredCities: [City] {
+        guard !searchText.isEmpty else { return cities }
+        return cities.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
     }
     
-    // MARK: - Public Methods
     func loadCities() async {
         isLoading = true
         appError = nil
+        defer { isLoading = false }
+        
         do {
-            let data = try await service.getAllStations()
+            let data = try await NetworkClient.shared.fetchAllStations()
+            
             let settlements = data.countries?
                 .flatMap { $0.regions ?? [] }
                 .flatMap { $0.settlements ?? [] } ?? []
@@ -44,17 +40,24 @@ final class CityPickerViewModel: ObservableObject {
             
             var seen = Set<String>()
             let uniqueCities = citiesWithDuplicates.filter { city in
-                if seen.contains(city.id) {
-                    return false
-                } else {
-                    seen.insert(city.id)
-                    return true
-                }
+                if seen.contains(city.id) { return false }
+                seen.insert(city.id)
+                return true
             }
             
             self.cities = uniqueCities.sorted { $0.title < $1.title }
+            
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet:
+                appError = .noInternet
+            case .badServerResponse, .cannotConnectToHost:
+                appError = .serverError
+            default:
+                appError = .unknown
+            }
         } catch {
+            appError = .unknown
         }
-        isLoading = false
     }
 }

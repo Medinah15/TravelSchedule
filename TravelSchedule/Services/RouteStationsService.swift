@@ -40,7 +40,7 @@ final class RouteStationsService: RouteStationsServiceProtocol {
             throw URLError(.badServerResponse)
         }
         
-        print("🔍 UID найден:", firstUID)
+        print("UID найден:", firstUID)
         return try await getRouteStationsRaw(uid: firstUID)
     }
     
@@ -54,7 +54,7 @@ final class RouteStationsService: RouteStationsServiceProtocol {
         let (data, _) = try await URLSession.shared.data(from: components.url!)
         
         if let jsonString = String(data: data, encoding: .utf8) {
-            print("📦 RAW JSON:\n\(jsonString)")
+            print(" RAW JSON:\n\(jsonString)")
         }
         
         return try RouteStationsServiceDateDecoder.decoder.decode(RouteStations.self, from: data)

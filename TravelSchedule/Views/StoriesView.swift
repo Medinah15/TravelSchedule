@@ -7,8 +7,7 @@
 import SwiftUI
 
 struct StoriesView: View {
-    @Binding var stories: [Story]
-    @Binding var selectedIndex: Int
+    @ObservedObject var viewModel: StoriesViewModel
     @Environment(\.dismiss) private var dismiss
     
     private let storyDuration: TimeInterval = 3.0
@@ -17,34 +16,30 @@ struct StoriesView: View {
     
     var body: some View {
         ZStack {
-            
             Color.black.ignoresSafeArea()
             
-            TabView(selection: $selectedIndex) {
-                ForEach(stories.indices, id: \.self) { index in
+            TabView(selection: $viewModel.selectedIndex) {
+                ForEach(viewModel.stories.indices, id: \.self) { index in
                     StoryPageView(
-                        story: stories[index],
+                        story: viewModel.stories[index],
                         index: index,
-                        selectedIndex: selectedIndex,
+                        selectedIndex: viewModel.selectedIndex,
                         progress: progress
                     )
                     .tag(index)
                     .onAppear {
-                        stories[index].isViewed = true
+                        viewModel.markStoryViewed(at: index)
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     }
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
         }
-        .onChange(of: selectedIndex) { _ in
+        .onChange(of: viewModel.selectedIndex) { _ in
             startTimer()
         }
-        .onAppear {
-            startTimer()
-        }
-        .onDisappear {
-            timer?.invalidate()
-        }
+        .onAppear { startTimer() }
+        .onDisappear { timer?.invalidate() }
     }
     
     private func startTimer() {
@@ -55,8 +50,8 @@ struct StoriesView: View {
             progress += 0.03 / storyDuration
             if progress >= 1.0 {
                 progress = 0.0
-                if selectedIndex < stories.count - 1 {
-                    selectedIndex += 1
+                if viewModel.selectedIndex < viewModel.stories.count - 1 {
+                    viewModel.selectedIndex += 1
                 } else {
                     t.invalidate()
                     dismiss()

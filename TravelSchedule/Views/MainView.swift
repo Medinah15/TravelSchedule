@@ -10,72 +10,20 @@ import SwiftUI
 struct MainView: View {
     
     // MARK: - State
-    @State private var fromTitle = ""
-    @State private var toTitle = ""
+    @StateObject private var viewModel = MainViewModel()
+    @StateObject private var storiesViewModel = StoriesViewModel()
     
-    @State private var fromStation: SelectedStation?
-    @State private var toStation: SelectedStation?
-    
-    @State private var pickFrom = true
-    @State private var path = NavigationPath()
-    
-    // Stories
-    @State private var stories: [Story] = [
-        Story(imageName: "story1",
-              title: "Text Text Text Text Text Text Text Text Text Text",
-              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
-              isViewed: false),
-        
-        Story(imageName: "story2",
-              title: "Text Text Text Text Text Text Text Text Text Text",
-              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
-              isViewed: false),
-        
-        Story(imageName: "story3",
-              title: "Text Text Text Text Text Text Text Text Text Text",
-              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
-              isViewed: false),
-        
-        Story(imageName: "story4",
-              title: "Text Text Text Text Text Text Text Text Text Text",
-              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
-              isViewed: false),
-        
-        Story(imageName: "story5",
-              title: "Text Text Text Text Text Text Text Text Text Text",
-              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
-              isViewed: false),
-        
-        Story(imageName: "story6",
-              title: "Text Text Text Text Text Text Text Text Text Text",
-              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
-              isViewed: false),
-        
-        Story(imageName: "story7",
-              title: "Text Text Text Text Text Text Text Text Text Text",
-              subtitle: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text",
-              isViewed: false)
-    ]
-    @State private var showStories = false
-    @State private var selectedIndex = 0
-    
-    // MARK: - Computed
-    var canSearch: Bool { fromStation != nil && toStation != nil }
-    
-    // MARK: - Body
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $viewModel.path) {
             ScrollView {
                 VStack(spacing: 24) {
-                    
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            ForEach(stories.indices, id: \.self) { index in
+                            ForEach(storiesViewModel.stories.indices, id: \.self) { index in
                                 Button {
-                                    selectedIndex = index
-                                    showStories = true
+                                    storiesViewModel.selectStory(at: index)
                                 } label: {
-                                    StoriesRow(story: stories[index])
+                                    StoriesRow(story: storiesViewModel.stories[index])
                                 }
                             }
                         }
@@ -84,30 +32,21 @@ struct MainView: View {
                     }
                     
                     SearchPanel(
-                        from: $fromTitle,
-                        to: $toTitle,
-                        onSwap: {
-                            swap(&fromTitle, &toTitle)
-                            swap(&fromStation, &toStation)
-                        },
-                        onFromTap: {
-                            pickFrom = true
-                            path.append(Route.cityPicker(isFrom: true))
-                        },
-                        onToTap: {
-                            pickFrom = false
-                            path.append(Route.cityPicker(isFrom: false))
-                        }
+                        from: $viewModel.fromTitle,
+                        to: $viewModel.toTitle,
+                        onSwap: { viewModel.swapStations() },
+                        onFromTap: { viewModel.goToCityPicker(isFrom: true) },
+                        onToTap: { viewModel.goToCityPicker(isFrom: false) }
                     )
                     .padding(.horizontal, 16)
                     .padding(.top, 24)
                     
-                    if canSearch {
+                    if viewModel.canSearch {
                         NavigationLink(value: Route.searchResults(
-                            fromCode: fromStation!.code,
-                            toCode: toStation!.code,
-                            fromTitle: fromStation!.title,
-                            toTitle: toStation!.title
+                            fromCode: viewModel.fromStation!.code,
+                            toCode: viewModel.toStation!.code,
+                            fromTitle: viewModel.fromStation!.title,
+                            toTitle: viewModel.toStation!.title
                         )) {
                             Text("Найти")
                                 .font(.system(size: 17, weight: .bold))
@@ -123,28 +62,18 @@ struct MainView: View {
             }
             .navigationDestination(for: Route.self) { route in
                 switch route {
-                    
                 case .cityPicker(let isFrom):
                     CityPickerView { city in
-                        path.removeLast()
-                        path.append(Route.stationPicker(
+                        viewModel.goToStationPicker(
                             cityId: city.id,
                             cityTitle: city.title,
                             isFrom: isFrom
-                        ))
+                        )
                     }
                     .toolbar(.hidden, for: .tabBar)
-                    
                 case .stationPicker(let cityId, let cityTitle, let isFrom):
                     StationPickerView(cityId: cityId) { station in
-                        if isFrom {
-                            fromStation = station
-                            fromTitle = "\(cityTitle), \(station.title)"
-                        } else {
-                            toStation = station
-                            toTitle = "\(cityTitle), \(station.title)"
-                        }
-                        path.removeLast()
+                        viewModel.selectStation(station, cityTitle: cityTitle, isFrom: isFrom)
                     }
                     .toolbar(.hidden, for: .tabBar)
                     
@@ -154,18 +83,23 @@ struct MainView: View {
                         toCode: toCode,
                         fromTitle: fromTitle,
                         toTitle: toTitle,
-                        path: $path
+                        path: $viewModel.path
                     )
                     .toolbar(.hidden, for: .tabBar)
                     
                 case .carrierInfo(let code):
                     CarrierCardView(carrierCode: code)
                         .toolbar(.hidden, for: .tabBar)
+                    
+                case .filters:
+                    FiltersView { newFilters in
+                    }
+                    .toolbar(.hidden, for: .tabBar)
                 }
             }
             
-            .fullScreenCover(isPresented: $showStories) {
-                StoriesView(stories: $stories, selectedIndex: $selectedIndex)
+            .fullScreenCover(isPresented: $storiesViewModel.showStories) {
+                StoriesView(viewModel: storiesViewModel)
             }
         }
     }

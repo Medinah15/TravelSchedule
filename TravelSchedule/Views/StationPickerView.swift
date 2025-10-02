@@ -8,32 +8,19 @@ import SwiftUI
 
 // MARK: - View
 struct StationPickerView: View {
-    
-    // MARK: - Environment
     @Environment(\.dismiss) private var dismiss
-    
-    // MARK: - State
-    @State private var searchText = ""
     @StateObject private var viewModel: StationPickerViewModel
     
-    // MARK: - Properties
     let onSelect: (SelectedStation) -> Void
     
-    // MARK: - Init
     init(cityId: String, onSelect: @escaping (SelectedStation) -> Void) {
         _viewModel = StateObject(wrappedValue: StationPickerViewModel(cityId: cityId))
         self.onSelect = onSelect
     }
     
-    // MARK: - Computed
-    var filteredStations: [Station] {
-        if searchText.isEmpty { return viewModel.stations }
-        return viewModel.stations.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
-    }
-    
-    // MARK: - Body
     var body: some View {
         VStack(spacing: 0) {
+            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -63,13 +50,13 @@ struct StationPickerView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(Color("GrayUniversal"))
                 
-                TextField("Введите запрос", text: $searchText)
+                TextField("Введите запрос", text: $viewModel.searchText)
                     .textInputAutocapitalization(.never)
                     .disableAutocorrection(true)
                     .foregroundStyle(Color("BlackUniversal"))
                 
-                if !searchText.isEmpty {
-                    Button { searchText = "" } label: {
+                if !viewModel.searchText.isEmpty {
+                    Button { viewModel.searchText = "" } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(Color("GrayUniversal"))
                     }
@@ -90,7 +77,7 @@ struct StationPickerView: View {
                 Spacer()
                 ErrorView(type: appError.errorType)
                 Spacer()
-            } else if filteredStations.isEmpty {
+            } else if viewModel.filteredStations.isEmpty {
                 Spacer()
                 Text("Станции не найдены")
                     .font(.system(size: 24, weight: .bold))
@@ -98,7 +85,7 @@ struct StationPickerView: View {
                 Spacer()
             } else {
                 List {
-                    ForEach(filteredStations) { station in
+                    ForEach(viewModel.filteredStations) { station in
                         Button {
                             onSelect(SelectedStation(code: station.id, title: station.title))
                             dismiss()

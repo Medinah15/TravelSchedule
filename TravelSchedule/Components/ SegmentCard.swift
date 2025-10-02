@@ -9,29 +9,14 @@ import SwiftUI
 // MARK: - View
 struct SegmentCard: View {
     
-    // MARK: - Properties
-    let segment: Components.Schemas.Segment
+    @ObservedObject var viewModel: SegmentViewModel
     
-    private var transportIcon: String {
-        switch segment.thread?.transport_type {
-        case "plane": "airplane"
-        case "train": "train.side.front.car"
-        case "suburban": "tram.fill"
-        case "bus": "bus"
-        case "water": "ferry"
-        case "helicopter": "helicopter"
-        default:"questionmark.circle"
-        }
-    }
-    
-    // MARK: - Body
     var body: some View {
         VStack(spacing: 4) {
             HStack(spacing: 4) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8).fill(Color.clear)
-                    if let logo = segment.thread?.carrier?.logo,
-                       let url = URL(string: logo) {
+                    if let url = viewModel.logoURL {
                         AsyncImage(url: url) { image in
                             image.resizable()
                                 .scaledToFit()
@@ -40,7 +25,7 @@ struct SegmentCard: View {
                             ProgressView().frame(width: 38, height: 38)
                         }
                     } else {
-                        Image(systemName: transportIcon)
+                        Image(systemName: viewModel.transportIcon)
                             .resizable()
                             .scaledToFit()
                             .foregroundStyle(.secondary)
@@ -50,12 +35,12 @@ struct SegmentCard: View {
                 .frame(width: 38, height: 38)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(segment.thread?.carrier?.title ?? "Без названия")
+                    Text(viewModel.carrierTitle)
                         .font(.system(size: 17))
                         .foregroundStyle(.black)
                     
-                    if let hasTransfers = segment.has_transfers, hasTransfers {
-                        Text("С пересадкой")
+                    if let transfers = viewModel.hasTransfersText {
+                        Text(transfers)
                             .font(.system(size: 12))
                             .foregroundStyle(.red)
                     }
@@ -63,17 +48,16 @@ struct SegmentCard: View {
                 
                 Spacer()
                 
-                if let dep = segment.departure {
-                    Text(shortDateFormatter.string(from: dep))
+                if let depDate = viewModel.departureDateText {
+                    Text(depDate)
                         .font(.system(size: 12))
                         .foregroundStyle(.black)
                 }
             }
             
             HStack {
-                
-                if let dep = segment.departure {
-                    Text(timeFormatter.string(from: dep))
+                if let depTime = viewModel.departureTimeText {
+                    Text(depTime)
                         .font(.system(size: 17))
                         .foregroundStyle(.black)
                 }
@@ -83,8 +67,8 @@ struct SegmentCard: View {
                         .fill(Color("GrayUniversal"))
                         .frame(height: 1)
                     
-                    if let duration = segment.duration {
-                        Text(Self.formatDuration(duration))
+                    if let duration = viewModel.durationText {
+                        Text(duration)
                             .font(.system(size: 12))
                             .foregroundStyle(.black)
                             .padding(.horizontal, 5)
@@ -94,8 +78,8 @@ struct SegmentCard: View {
                     }
                 }
                 
-                if let arr = segment.arrival {
-                    Text(timeFormatter.string(from: arr))
+                if let arrTime = viewModel.arrivalTimeText {
+                    Text(arrTime)
                         .font(.system(size: 17))
                         .foregroundStyle(.black)
                 }
@@ -109,27 +93,4 @@ struct SegmentCard: View {
                 .frame(height: 104)
         )
     }
-    
-    // MARK: - Helpers
-    private static func formatDuration(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let hours = minutes / 60
-        let mins = minutes % 60
-        return hours > 0 ? "\(hours) ч \(mins) мин" : "\(mins) мин"
-    }
 }
-
-// MARK: - Formatters
-fileprivate let shortDateFormatter: DateFormatter = {
-    let f = DateFormatter()
-    f.locale = Locale(identifier: "ru_RU")
-    f.setLocalizedDateFormatFromTemplate("d MMMM")
-    return f
-}()
-
-fileprivate let timeFormatter: DateFormatter = {
-    let f = DateFormatter()
-    f.dateFormat = "HH:mm"
-    f.locale = Locale(identifier: "ru_RU")
-    return f
-}()
